@@ -22,6 +22,7 @@
         @livewireStyles
     </head>
     <body class="antialiased">
+        @livewire('articles')
         @livewireScripts
     </body>
 </html>
