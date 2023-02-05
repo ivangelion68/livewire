@@ -16,3 +16,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+public/vendor/livewire/livewire.js
+public/vendor/livewire/livewire.js.map
+public/vendor/livewire/manifest.json
