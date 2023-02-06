@@ -15,3 +15,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', App\Http\Livewire\Articles::class)->name('article.index');
 Route::get('/blog/crear', App\Http\Livewire\ArticleForm::class)->name('article.create');
+Route::get('/blog/{article}', App\Http\Livewire\ArticleShow::class)->name('article.show');
