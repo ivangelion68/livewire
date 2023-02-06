@@ -6,7 +6,7 @@ use Livewire\Component;
 use App\Models\Article;
 class Articles extends Component
 {
-    public $articles;
+    public $search;
 
     public function mount(){
         $this->articles=Article::all();
