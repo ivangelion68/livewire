@@ -6,16 +6,19 @@ use Livewire\Component;
 use App\Models\Article;
 class ArticleForm extends Component
 {
-    public $title;
-    public $content;
+    public Article $article;
 
     protected $rules=[
-        'title'=>['required','min:4'],
-        'content'=>['required'],
+        'article.title'=>['required','min:4'],
+        'article.content'=>['required'],
     ];
 
     public function updated($propertyName){
         $this->validateOnly($propertyName);
+    }
+
+    public function mount(Article $article){
+        $this->article = $article;
     }
 
     public function render()

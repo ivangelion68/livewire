@@ -3,4 +3,5 @@
     <p>
         {{$article->content}}
     </p>
+    <a href="{{route('article.index')}}">Volver al indice</a>
 </div>

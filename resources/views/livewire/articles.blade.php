@@ -8,6 +8,7 @@
             <a href="{{route('article.show', $article)}}">
                 {{$article->title}}
             </a>
+            - <a href="{{route('article.edit', $article)}}">Editar</a>
         </li>
         @endforeach
     </ul>
