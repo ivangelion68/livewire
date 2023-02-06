@@ -9,7 +9,7 @@ class Articles extends Component
     public $search;
 
     public function mount(){
-        $this->articles=Article::all();
+        $this->articles=Article::latest()->get();
     }
 
     public function render()
