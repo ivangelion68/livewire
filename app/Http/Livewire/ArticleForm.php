@@ -7,17 +7,24 @@ use App\Models\Article;
 class ArticleForm extends Component
 {
     public $title;
-    public $contenido;
+    public $content;
+
+    protected $rules=[
+        'title'=>['required','min:4'],
+        'content'=>['required'],
+    ];
+
+    public function updated($propertyName){
+        $this->validateOnly($propertyName);
+    }
+
     public function render()
     {
         return view('livewire.article-form');
     }
 
     public function save(){
-        $article = new Article();
-        $article->title=$this->title;
-        $article->content=$this->contenido;
-        $article->save();
+        Article::create($this->validate());
         session()->flash('status',__('Article created'));
         $this->redirectRoute('article.index');
 
