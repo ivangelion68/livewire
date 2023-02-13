@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', App\Http\Livewire\Articles::class)->name('article.index');
-Route::get('/blog/crear', App\Http\Livewire\ArticleForm::class)->name('article.create');
+Route::get('/blog/crear', App\Http\Livewire\ArticleForm::class)
+    ->name('article.create')
+    ->middleware('auth');
 Route::get('/blog/{article}', App\Http\Livewire\ArticleShow::class)->name('article.show');
-Route::get('/blog/{article}/edit', App\Http\Livewire\ArticleEdit::class)->name('article.edit');
+Route::get('/blog/{article}/edit', App\Http\Livewire\ArticleEdit::class)
+    ->name('article.edit')
+    ->middleware('auth');
+Route::get('login')->name('login');

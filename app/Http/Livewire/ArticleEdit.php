@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Article;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
@@ -31,12 +32,17 @@ class ArticleEdit extends Component
         $this->validateOnly($propertyName);
     }
 
+    public function updatedArticleTitle($title){
+        $this->article->slug = Str::slug($title);
+    }
+
     public function render()
     {
         return view('livewire.article-edit');
     }
 
     public function save(){
+
         $this->validate();
         $this->article->save();
         session()->flash('status',__('Article edited'));

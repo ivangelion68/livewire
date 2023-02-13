@@ -4,6 +4,7 @@ namespace Tests\Feature\Livewire;
 
 use App\Http\Livewire\ArticleForm;
 use App\Models\Article;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Livewire\Livewire;
@@ -15,8 +16,8 @@ class ArticleFormTest extends TestCase
 
     /** @test */
     public function can_create_new_articles(){
-
-        Livewire::test('article-form')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-form')
             ->set('article.title', 'New Article')
             ->set('article.slug', 'new-article')
             ->set('article.content', 'Article Content')
@@ -27,14 +28,16 @@ class ArticleFormTest extends TestCase
         $this->assertDatabaseHas('articles',[
             'title'=>'New Article',
             'content'=>'Article Content',
-            'slug'=>'new-article'
+            'slug'=>'new-article',
+            'user_id'=>$user->id
         ]);
 
     }
 
     /** @test */
     public function null_title(){
-        Livewire::test('article-form')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-form')
 //            ->set('article.title','New Article')
             ->set('article.content','New content')
             ->call('save')
@@ -43,7 +46,8 @@ class ArticleFormTest extends TestCase
 
     /** @test */
     public function title_with_less_characters(){
-        Livewire::test('article-form')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-form')
             ->set('article.title','Ne')
             ->set('article.content','New content')
             ->call('save')
@@ -52,7 +56,8 @@ class ArticleFormTest extends TestCase
 
     /** @test */
     public function null_content(){
-        Livewire::test('article-form')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-form')
             ->set('article.title','New Article')
 //            ->set('article.content','New content')
             ->call('save')
@@ -61,7 +66,8 @@ class ArticleFormTest extends TestCase
 
     /** @test */
     public function blade_template_is_wired_properly(){
-        Livewire::test('article-form')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-form')
             ->assertSeeHtml('wire:submit.prevent="save"')
             ->assertSeeHtml('wire:model="article.title"')
             ->assertSeeHtml('wire:model="article.content"')
@@ -71,7 +77,8 @@ class ArticleFormTest extends TestCase
     /** @test */
     public function can_update_articles(){
         $article = Article::factory()->create();
-        Livewire::test('article-edit', ['article'=>$article])
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-edit', ['article'=>$article])
             ->assertSet('article.title',$article->title)
             ->assertSet('article.content',$article->content)
             ->assertSet('article.slug',$article->slug)
@@ -92,9 +99,12 @@ class ArticleFormTest extends TestCase
 
     /** @test  */
     public function null_slug_on_edit(){
-        Livewire::test('article-edit')
+        $user = User::factory()->create();
+        $article = Article::factory()->create();
+        Livewire::actingAs($user)->test('article-edit', ['article'=>$article])
             ->set('article.title','New Article')
             ->set('article.content','New content')
+            ->set('article.slug','')
             ->call('save')
             ->assertHasErrors(['article.slug'=>'required']);
     }
@@ -102,7 +112,8 @@ class ArticleFormTest extends TestCase
     /** @test  */
     public function unique_slug_on_edit(){
         $article = Article::factory()->create();
-        Livewire::test('article-edit')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-edit')
             ->set('article.title','New Article')
             ->set('article.content','New content')
             ->set('article.slug',$article->slug)
@@ -114,7 +125,8 @@ class ArticleFormTest extends TestCase
     /** @test  */
     public function unique_should_be_avoid_on_update(){
         $article = Article::factory()->create();
-        Livewire::test('article-edit')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-edit')
             ->set('article.title','New Article')
             ->set('article.content','New content')
             ->set('article.slug',$article->slug)
@@ -125,24 +137,24 @@ class ArticleFormTest extends TestCase
 
     /** @test  */
     public function self_generate_slug_on_new(){
-//        $article = Article::factory()->create();
-        Livewire::test('article-form')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-form')
             ->set('article.title','New Article')
             ->assertSet('article.slug','new-article');
     }
 
     /** @test  */
     public function self_generate_slug_on_update(){
-//        $article = Article::factory()->create();
-        Livewire::test('article-edit')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-edit')
             ->set('article.title','New Article')
             ->assertSet('article.slug','new-article');
     }
 
     /** @test  */
     public function slug_must_only_contain_letters_number_dashes_and_underscore(){
-//        $article = Article::factory()->create();
-        Livewire::test('article-form')
+        $user = User::factory()->create();
+        Livewire::actingAs($user)->test('article-form')
             ->set('article.title','New Article')
             ->set('article.slug','new-article*****')
             ->set('article.content','New content')
@@ -150,6 +162,19 @@ class ArticleFormTest extends TestCase
             ->assertHasErrors(['article.slug'=>'alpha_dash'])
             ->assertSeeHtml(__('validation.alpha_dash',['attribute'=>'slug']));
     }
+
+    /** @test  */
+    public function guest_cannot_create_articles(){
+
+//        $user = User::factory()->create();
+        $this->get(route('article.create'))
+            ->assertRedirect('login');
+
+        $article = Article::factory()->create();
+        $this->get(route('article.edit',$article))
+            ->assertRedirect('login');
+    }
+
 
 }
 
