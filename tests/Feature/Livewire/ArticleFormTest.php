@@ -122,6 +122,35 @@ class ArticleFormTest extends TestCase
             ->assertHasErrors(['article.slug'=>'unique:articles,slug'])
             ->assertSeeHtml(__('validation.unique',['attribute'=>'slug']));
     }
+
+    /** @test  */
+    public function self_generate_slug_on_new(){
+//        $article = Article::factory()->create();
+        Livewire::test('article-form')
+            ->set('article.title','New Article')
+            ->assertSet('article.slug','new-article');
+    }
+
+    /** @test  */
+    public function self_generate_slug_on_update(){
+//        $article = Article::factory()->create();
+        Livewire::test('article-edit')
+            ->set('article.title','New Article')
+            ->assertSet('article.slug','new-article');
+    }
+
+    /** @test  */
+    public function slug_must_only_contain_letters_number_dashes_and_underscore(){
+//        $article = Article::factory()->create();
+        Livewire::test('article-form')
+            ->set('article.title','New Article')
+            ->set('article.slug','new-article*****')
+            ->set('article.content','New content')
+            ->call('save')
+            ->assertHasErrors(['article.slug'=>'alpha_dash'])
+            ->assertSeeHtml(__('validation.alpha_dash',['attribute'=>'slug']));
+    }
+
 }
 
 
