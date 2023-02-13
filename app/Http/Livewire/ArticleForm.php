@@ -13,23 +13,25 @@ class ArticleForm extends Component
         'article.content'=>['required'],
     ];
 
-    public function updated($propertyName){
-        $this->validateOnly($propertyName);
-    }
+
 
     public function mount(Article $article){
         $this->article = $article;
     }
 
-    public function render()
-    {
-        return view('livewire.article-form');
+    public function updated($propertyName){
+        $this->validateOnly($propertyName);
     }
 
     public function save(){
-        Article::create($this->validate());
+        $this->validate();
+        $this->article->save();
         session()->flash('status',__('Article created'));
         $this->redirectRoute('article.index');
+    }
 
+    public function render()
+    {
+        return view('livewire.article-form');
     }
 }
