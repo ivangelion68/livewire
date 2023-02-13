@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\Article;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 
 class ArticleEdit extends Component
@@ -10,10 +11,17 @@ class ArticleEdit extends Component
 
     public Article $article;
 
-    protected $rules=[
-        'article.title'=>['required','min:4'],
-        'article.content'=>['required'],
-    ];
+    protected function rules(){
+
+         return[
+             'article.title'=>['required', 'min:4'],
+             'article.content'=>['required'],
+             'article.slug'=>[
+                   'required'
+                 , Rule::unique('articles','slug')->ignore($this->article)
+                 ]
+        ];
+    }
 
     public function mount(Article $article){
         $this->article= $article;
@@ -29,6 +37,7 @@ class ArticleEdit extends Component
     }
 
     public function save(){
+        $this->validate();
         $this->article->save();
         session()->flash('status',__('Article edited'));
         $this->redirectRoute('article.index');

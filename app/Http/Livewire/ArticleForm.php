@@ -11,6 +11,7 @@ class ArticleForm extends Component
     protected $rules=[
         'article.title'=>['required','min:4'],
         'article.content'=>['required'],
+        'article.slug'=>['required','unique:articles,slug'],
     ];
 
 
