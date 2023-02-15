@@ -22,7 +22,7 @@
                     </div>
                     <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="content" :value="__('Content')" />
-                        <x-textarea name="content" id="content" class="mt-1 block w-full" wire:model="article.content"></x-textarea>
+                        <x-html-editor name="content" id="content" class="mt-1 block w-full" wire:model="article.content"></x-html-editor>
                         <x-jet-input-error for="article.content" class="mt-2"></x-jet-input-error>
                     </div>
                     <x-slot name="actions">
