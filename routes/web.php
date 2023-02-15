@@ -21,4 +21,14 @@ Route::get('/blog/{article}', App\Http\Livewire\ArticleShow::class)->name('artic
 Route::get('/blog/{article}/edit', App\Http\Livewire\ArticleEdit::class)
     ->name('article.edit')
     ->middleware('auth');
-Route::get('login')->name('login');
+//Route::get('login')->name('login');
+
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
