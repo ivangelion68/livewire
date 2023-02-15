@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string("title");
             $table->text("content");
+            $table->text("image");
             $table->string('slug')->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

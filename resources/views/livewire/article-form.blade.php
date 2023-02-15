@@ -16,6 +16,11 @@
                         <x-jet-input-error for="article.title" class="mt-2"></x-jet-input-error>
                     </div>
                     <div class="col-span-6 sm:col-span-4">
+                        <x-jet-label for="image" :value="__('Image')" />
+                        <x-jet-input type="file" name="image" id="image" class="mt-1 block w-full" wire:model="image"></x-jet-input>
+                        <x-jet-input-error for="image" class="mt-2"></x-jet-input-error>
+                    </div>
+                    <div class="col-span-6 sm:col-span-4">
                         <x-jet-label for="slug" :value="__('Slug')" />
                         <x-jet-input type="text" name="slug" id="slug" class="mt-1 block w-full" wire:model="article.slug"></x-jet-input>
                         <x-jet-input-error for="article.slug" class="mt-2"></x-jet-input-error>

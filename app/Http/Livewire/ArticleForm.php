@@ -6,14 +6,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use App\Models\Article;
+use Livewire\WithFileUploads;
+
 class ArticleForm extends Component
 {
+    use WithFileUploads;
     public Article $article;
 
+    public $image;
     protected $rules=[
         'article.title'=>['required','min:4'],
         'article.content'=>['required'],
         'article.slug'=>['required','unique:articles,slug','alpha_dash'],
+        'image'=>['image', 'max:2048']
     ];
 
 
@@ -32,6 +37,7 @@ class ArticleForm extends Component
 
     public function save(){
         $this->validate();
+        $this->article->image = $this->image->store('/','public');
         Auth::user()->articles()->save($this->article);
         session()->flash('status',__('Article created'));
         $this->redirectRoute('article.index');
