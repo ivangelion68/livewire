@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use App\Models\Article;
 use Livewire\WithFileUploads;
@@ -14,14 +15,18 @@ class ArticleForm extends Component
     public Article $article;
 
     public $image;
-    protected $rules=[
-        'article.title'=>['required','min:4'],
-        'article.content'=>['required'],
-        'article.slug'=>['required','unique:articles,slug','alpha_dash'],
-        'image'=>['image', 'max:2048']
-    ];
 
-
+    protected function rules(){
+        return [
+            'article.title'=>['required','min:4'],
+            'article.content'=>['required'],
+            'article.slug'=>['required','unique:articles,slug','alpha_dash'],
+            'image'=>[
+                  Rule::requiredIf(!$this->article->image)
+                , Rule::when($this->image, ['image','max:2048'])
+            ]
+        ];
+    }
 
     public function mount(Article $article){
         $this->article = $article;

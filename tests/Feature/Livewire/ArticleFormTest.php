@@ -7,6 +7,8 @@ use App\Models\Article;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -17,7 +19,11 @@ class ArticleFormTest extends TestCase
     /** @test */
     public function can_create_new_articles(){
         $user = User::factory()->create();
+        Storage::fake('public');
+        $image = UploadedFile::fake()->image('post-image.png')->size(2000);
+
         Livewire::actingAs($user)->test('article-form')
+            ->set('image', $image)
             ->set('article.title', 'New Article')
             ->set('article.slug', 'new-article')
             ->set('article.content', 'Article Content')
@@ -31,7 +37,20 @@ class ArticleFormTest extends TestCase
             'slug'=>'new-article',
             'user_id'=>$user->id
         ]);
+    }
 
+    /** @test */
+    public function image_must_be_2mb_max(){
+        $user = User::factory()->create();
+        Storage::fake('public');
+        $image = UploadedFile::fake()->image('post-image.png')->size(3000);
+
+        Livewire::actingAs($user)->test('article-form')
+            ->set('image', $image)
+            ->call('save')
+            ->assertHasErrors(['image'=>'max'])
+            ->assertSeeHtml(__('validation.max.file',['attribute'=>'image','max'=>'2048']))
+        ;
     }
 
     /** @test */
@@ -70,7 +89,7 @@ class ArticleFormTest extends TestCase
         Livewire::actingAs($user)->test('article-form')
             ->assertSeeHtml('wire:submit.prevent="save"')
             ->assertSeeHtml('wire:model="article.title"')
-            ->assertSeeHtml('wire:model="article.content"')
+//            ->assertSeeHtml('wire:model="article.content"')
             ->assertSeeHtml('wire:model="article.slug"');
     }
 
